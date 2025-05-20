@@ -62,7 +62,7 @@ def rename_colunas_parcelas(df):
 		'Valor_Parcela': 'Valor Parcela',
 		'Data_Vencimento': 'Data Vencimento',
 		'Status_Pagamento': 'Status Pagamento',
-		'Data_Recebimento': 'Data Recebimento',
+		'Data_Recebimento_Parcela': 'Data Recebimento',
 		'Repasse_Gazit_Bruto': 'Valor Bruto Repasse Gazit',
 		'Repasse_Gazit_Liquido': 'Valor Liquido Repasse Gazit',
 		'Valor_Locacao_Total': 'Total Locação',
@@ -75,7 +75,7 @@ def rename_colunas_parcelas(df):
 
 def calcular_repasses_gazit_parcelas(df_parcelas, df_eventos):
 
-	df_parcelas = df_parcelas.merge(df_eventos[['ID_Evento', 'Total_Gazit', 'Valor_Locacao_Total']], how='left', on='ID_Evento')
+	df_parcelas = df_parcelas.merge(df_eventos[['ID_Evento', 'Total_Gazit', 'Valor_Locacao_Total', 'Data_Evento']], how='left', on='ID_Evento')
 
 	if not 'Repasse_Gazit_Bruto' in df_parcelas.columns:
 		df_parcelas['Repasse_Gazit_Bruto'] = 0

@@ -112,7 +112,7 @@ def main():
 			st.markdown("Clique em um mês no gráfico para visualizar parcelas.")
 
 	with tab2:
-		st.markdown("### Gazit - Projeção por Recebimento")
+		st.markdown("### Gazit - Valor Realizado (R$)")
 
 		mes_recebimento = grafico_barras_repasse_mensal_recebimento(df_parcelas)
 

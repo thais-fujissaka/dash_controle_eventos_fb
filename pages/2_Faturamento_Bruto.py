@@ -72,12 +72,14 @@ def main():
 	# Seletor de ano
 	col1, col2 = st.columns([1, 3])
 	with col1:
-		ano = seletor_ano(2025, 2025, key='ano_faturamento')
-
-	df_filtrar_ano(df_parcelas, 'Data_Vencimento', ano)
+		ano = seletor_ano(2024, 2025, key='ano_faturamento')
 
 	# Calcula o valor de repasse para Gazit das parcelas
 	df_parcelas = calcular_repasses_gazit_parcelas(df_parcelas, df_eventos)
+
+	df_parcelas_competencia = df_filtrar_ano(df_parcelas, 'Data_Evento', ano)
+	df_parcelas_caixa = df_filtrar_ano(df_parcelas, 'Data_Recebimento', ano)
+	df_parcelas = df_filtrar_ano(df_parcelas, 'Data_Vencimento', ano)
 
 	# FATURAMENTO #
 
@@ -85,23 +87,34 @@ def main():
 	tab1, tab2, tab3, tab4, tab5 = st.tabs(["Total de Eventos", "Locação Aroo", "Locação Anexo", "Locação Notiê", "Alimentos e Bebidas"])
 
 	with tab1:
-		st.markdown("### Faturamento Total de Eventos")
-		mes_faturamento_eventos = grafico_barras_total_eventos(df_parcelas)
+		# with st.container(border=True):
+		# 	col1, col2, col3 = st.columns([1, 12, 1])
+		# 	with col2:
+		# 		st.markdown("### Faturamento Bruto - Total de Eventos")
+		# 		mes_faturamento = grafico_barras_total_eventos(df_parcelas)
+		
+		st.markdown("### Faturamento Total de Eventos - Competência")
+		mes_faturamento_eventos_competencia = grafico_barras_total_eventos_competencia(df_parcelas_competencia)
+	
+		st.divider()
+		st.markdown("### Faturamento Total de Eventos - Caixa")
+		
+		mes_faturamento_eventos_caixa = grafico_barras_total_eventos_caixa(df_parcelas_caixa)
 
 	with tab2:
-		st.markdown("### Faturamento - Locação Aroo")
+		st.markdown("### Faturamento - Locação Aroo", help="\\* Por data de vencimento")
 		mes_aroo = grafico_barras_locacao_aroo(df_parcelas, df_eventos)
 
 	with tab3:
-		st.markdown("### Faturamento - Locação Anexo")
+		st.markdown("### Faturamento - Locação Anexo", help="\\* Por data de vencimento")
 		mes_anexo = grafico_barras_locacao_anexo(df_parcelas, df_eventos)
 
 	with tab4:
-		st.markdown("### Faturamento - Locação Notiê")
+		st.markdown("### Faturamento - Locação Notiê", help="\\* Por data de vencimento")
 		mes_notie = grafico_barras_locacao_notie(df_parcelas, df_eventos)
 
 	with tab5:
-		st.markdown("### Faturamento - Alimentos e Bebidas")
+		st.markdown("### Faturamento - Alimentos e Bebidas", help="\\* Por data de vencimento")
 		mes_AB = grafico_barras_faturamento_AB(df_parcelas)
 
 if __name__ == '__main__':

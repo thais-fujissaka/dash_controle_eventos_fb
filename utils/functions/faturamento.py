@@ -125,6 +125,314 @@ def grafico_barras_total_eventos(df_parcelas):
         st.markdown("Selecione um mês para visualizar as parcelas correspondentes ao faturamento do mês.")
 
 
+# Total de Eventos - Competência
+def grafico_barras_total_eventos_competencia(df_parcelas):
+
+    # Normaliza
+    df_parcelas['Categoria_Parcela'] = df_parcelas['Categoria_Parcela'].str.replace('ç', 'c')
+
+    # Extrai mês e ano da coluna 'Data_Evento'
+    df_parcelas['Mes'] = df_parcelas['Data_Evento'].dt.month
+    df_parcelas['Ano'] = df_parcelas['Data_Evento'].dt.year
+
+    # Agrupa os valores por mês e ano
+    df_parcelas_agrupado = df_parcelas.groupby(['Mes', 'Ano', 'Categoria_Parcela'])['Valor_Parcela'].sum().reset_index()
+    df_parcelas_agrupado['Valor_Parcela'] = df_parcelas_agrupado['Valor_Parcela'].round(2)
+
+
+    # Pivotar: linhas = Mes, colunas = Categoria_Parcela, valores = soma dos valores
+    df_pivot = df_parcelas_agrupado.pivot_table(
+        index='Mes',
+        columns='Categoria_Parcela',
+        values='Valor_Parcela',
+        aggfunc='sum'
+    ).fillna(0).reset_index()
+
+    # Cria lista de meses
+    meses = df_pivot['Mes'].unique().tolist()
+    nomes_meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+    nomes_meses = [nomes_meses_pt[int(mes) - 1] for mes in meses]
+
+    # Cria lista de valores
+    total_eventos_por_competencia_AB = df_pivot.get('A&B', pd.Series([0]*len(df_pivot))).tolist()
+    total_eventos_por_competencia_locacao = df_pivot.get('Locacão', pd.Series([0]*len(df_pivot))).tolist()
+
+    # Valores e labels formatados
+    total_eventos_por_competencia_AB_formatados = valores_labels_formatados(total_eventos_por_competencia_AB)
+    total_eventos_por_competencia_locacao_formatados = valores_labels_formatados(total_eventos_por_competencia_locacao)
+
+    # Options do grafico
+    option = {
+        "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+                "type": "shadow"
+            }
+        },
+        "legend": {
+            "data": [
+                "Faturamento por Competência - A&B",
+                "Faturamento por Competência - Locação"
+            ],
+            "top": "0%",   # Posição no topo do gráfico
+            "left": "center",  # Centraliza a legenda horizontalmente
+            "textStyle": {
+                "color": "#000"  # cor do texto da legenda
+            }
+        },
+        "grid": {
+            "left": "3%",
+            "right": "4%",
+            "bottom": "3%",
+            "containLabel": True
+        },
+        "xAxis": [
+            {
+                "type": "category",
+                "data": nomes_meses,
+                "boundaryGap": True,
+                "axisTick": {
+                    "alignWithLabel": True
+                }
+            }
+        ],
+        "yAxis": [
+            {
+                "type": "value"
+            }
+        ],
+        "series": [
+            {
+                "name": "Faturamento por Competência - A&B",
+                "type": "bar",
+                "barWidth": "35%",
+                "barGap": "5%",
+                "data": total_eventos_por_competencia_AB_formatados,
+                "itemStyle": {
+                    "color": "#FAC858"
+                },
+                "label": {
+                "show": True,
+                "position": "top",
+                "color": "#000"  # cor do texto
+                }
+            },
+            {
+                "name": "Faturamento por Competência - Locação",
+                "type": "bar",
+                "barWidth": "35%",
+                "barGap": "5%",
+                "data": total_eventos_por_competencia_locacao_formatados,
+                "itemStyle": {
+                    "color": "#5470C6"
+                },
+                "label": {
+                "show": True,
+                "position": "top",
+                "color": "#000"  # cor do texto
+                }
+            }
+        ]
+    }
+
+    # Evento de clique
+    events = {
+        "click": "function(params) { return params.name; }"
+    }
+
+    # Exibir gráfico com captura de clique
+    mes_selecionado = st_echarts(option, events=events, height=300, width="100%", key="chart_total_eventos_competencia")
+
+    # Dicionário para mapear os meses
+    meses = {
+        "Janeiro": "01",
+        "Fevereiro": "02",
+        "Março": "03",
+        "Abril": "04",
+        "Maio": "05",
+        "Junho": "06",
+        "Julho": "07",
+        "Agosto": "08",
+        "Setembro": "09",
+        "Outubro": "10",
+        "Novembro": "11",
+        "Dezembro": "12"
+    }
+
+    # Inverter normalização
+    df_parcelas['Categoria_Parcela'] = df_parcelas['Categoria_Parcela'].str.replace('Locacão', 'Locação')
+    
+    # Obter o mês correspondente ao mês selecionado
+    if mes_selecionado != None:
+        mes_selecionado = meses[mes_selecionado]
+        
+        col1, col2, col3 = st.columns([1, 12, 1])
+        with col2:
+            df_parcelas = df_filtrar_mes(df_parcelas, 'Data_Evento', mes_selecionado)
+            df_parcelas.drop(columns=['Mes', 'Ano', 'Total_Gazit', 'Repasse_Gazit_Bruto', 'Repasse_Gazit_Liquido', 'Valor_Locacao_Total'], inplace=True)
+            df_parcelas = df_formata_datas_sem_horario(df_parcelas, ['Data_Vencimento', 'Data_Recebimento', 'Data_Evento'])
+            df_parcelas = rename_colunas_parcelas(df_parcelas)
+            df_parcelas = format_columns_brazilian(df_parcelas, ['Valor Parcela', 'Valor Bruto Repasse Gazit'])
+        st.markdown("#### Parcelas")
+        st.dataframe(df_parcelas, use_container_width=True, hide_index=True)
+    else:
+        st.markdown("### Parcelas")
+        st.markdown("Selecione um mês para visualizar as parcelas correspondentes ao faturamento do mês.")
+
+# Total de Eventos - Caixa
+def grafico_barras_total_eventos_caixa(df_parcelas):
+
+    # Normaliza
+    df_parcelas['Categoria_Parcela'] = df_parcelas['Categoria_Parcela'].str.replace('ç', 'c')
+
+    # Extrai mês e ano da coluna 'Data_Evento'
+    df_parcelas['Mes'] = df_parcelas['Data_Recebimento'].dt.month
+    df_parcelas['Ano'] = df_parcelas['Data_Recebimento'].dt.year
+
+    # Agrupa os valores por mês e ano
+    df_parcelas_agrupado = df_parcelas.groupby(['Mes', 'Ano', 'Categoria_Parcela'])['Valor_Parcela'].sum().reset_index()
+    df_parcelas_agrupado['Valor_Parcela'] = df_parcelas_agrupado['Valor_Parcela'].round(2)
+
+
+    # Pivotar: linhas = Mes, colunas = Categoria_Parcela, valores = soma dos valores
+    df_pivot = df_parcelas_agrupado.pivot_table(
+        index='Mes',
+        columns='Categoria_Parcela',
+        values='Valor_Parcela',
+        aggfunc='sum'
+    ).fillna(0).reset_index()
+
+    # Cria lista de meses
+    meses = df_pivot['Mes'].unique().tolist()
+    nomes_meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+    nomes_meses = [nomes_meses_pt[int(mes) - 1] for mes in meses]
+
+    # Cria lista de valores
+    total_eventos_por_recebimento_AB = df_pivot.get('A&B', pd.Series([0]*len(df_pivot))).tolist()
+    total_eventos_por_recebimento_locacao = df_pivot.get('Locacão', pd.Series([0]*len(df_pivot))).tolist()
+
+    # Valores e labels formatados
+    total_eventos_por_recebimento_AB_formatados = valores_labels_formatados(total_eventos_por_recebimento_AB)
+    total_eventos_por_recebimento_locacao_formatados = valores_labels_formatados(total_eventos_por_recebimento_locacao)
+
+    # Options do grafico
+    option = {
+        "tooltip": {
+            "trigger": "axis",
+            "axisPointer": {
+                "type": "shadow"
+            }
+        },
+        "legend": {
+            "data": [
+                "Faturamento por Recebimento - A&B",
+                "Faturamento por Recebimento - Locação"
+            ],
+            "top": "0%",   # Posição no topo do gráfico
+            "left": "center",  # Centraliza a legenda horizontalmente
+            "textStyle": {
+                "color": "#000"  # cor do texto da legenda
+            }
+        },
+        "grid": {
+            "left": "3%",
+            "right": "4%",
+            "bottom": "3%",
+            "containLabel": True
+        },
+        "xAxis": [
+            {
+                "type": "category",
+                "data": nomes_meses,
+                "boundaryGap": True,
+                "axisTick": {
+                    "alignWithLabel": True
+                }
+            }
+        ],
+        "yAxis": [
+            {
+                "type": "value"
+            }
+        ],
+        "series": [
+            {
+                "name": "Faturamento por Recebimento - A&B",
+                "type": "bar",
+                "barWidth": "35%",
+                "barGap": "5%",
+                "data": total_eventos_por_recebimento_AB_formatados,
+                "itemStyle": {
+                    "color": "#FAC858"
+                },
+                "label": {
+                "show": True,
+                "position": "top",
+                "color": "#000"  # cor do texto
+                }
+            },
+            {
+                "name": "Faturamento por Recebimento - Locação",
+                "type": "bar",
+                "barWidth": "35%",
+                "barGap": "5%",
+                "data": total_eventos_por_recebimento_locacao_formatados,
+                "itemStyle": {
+                    "color": "#5470C6"
+                },
+                "label": {
+                "show": True,
+                "position": "top",
+                "color": "#000"  # cor do texto
+                }
+            }
+        ]
+    }
+
+    # Evento de clique
+    events = {
+        "click": "function(params) { return params.name; }"
+    }
+
+    # Exibir gráfico com captura de clique
+    mes_selecionado = st_echarts(option, events=events, height=300, width="100%", key="chart_total_eventos_recebimento")
+
+    # Dicionário para mapear os meses
+    meses = {
+        "Janeiro": "01",
+        "Fevereiro": "02",
+        "Março": "03",
+        "Abril": "04",
+        "Maio": "05",
+        "Junho": "06",
+        "Julho": "07",
+        "Agosto": "08",
+        "Setembro": "09",
+        "Outubro": "10",
+        "Novembro": "11",
+        "Dezembro": "12"
+    }
+
+    # Inverter normalização
+    df_parcelas['Categoria_Parcela'] = df_parcelas['Categoria_Parcela'].str.replace('Locacão', 'Locação')
+    
+    # Obter o mês correspondente ao mês selecionado
+    if mes_selecionado != None:
+        mes_selecionado = meses[mes_selecionado]
+        
+        col1, col2, col3 = st.columns([1, 12, 1])
+        with col2:
+            df_parcelas = df_filtrar_mes(df_parcelas, 'Data_Recebimento', mes_selecionado)
+            df_parcelas.drop(columns=['Mes', 'Ano', 'Total_Gazit', 'Repasse_Gazit_Bruto', 'Repasse_Gazit_Liquido', 'Valor_Locacao_Total'], inplace=True)
+            df_parcelas = df_formata_datas_sem_horario(df_parcelas, ['Data_Vencimento', 'Data_Recebimento', 'Data_Evento'])
+            df_parcelas = rename_colunas_parcelas(df_parcelas)
+            df_parcelas = format_columns_brazilian(df_parcelas, ['Valor Parcela', 'Valor Bruto Repasse Gazit'])
+        st.markdown("#### Parcelas")
+        st.dataframe(df_parcelas, use_container_width=True, hide_index=True)
+    else:
+        st.markdown("### Parcelas")
+        st.markdown("Selecione um mês para visualizar as parcelas correspondentes ao faturamento do mês.")
+
 # Locação
 
 def df_fracao_locacao_espacos(df_eventos):
