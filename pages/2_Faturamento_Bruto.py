@@ -39,6 +39,7 @@ def main():
 		'Valor_Locacao_Aroo_3': float,
 		'Valor_Locacao_Anexo': float,
 		'Valor_Locacao_Notie': float,
+		'Valor_Locacao_Mirante': float,
 		'Valor_Imposto': float,
 		'Valor_AB': float,
 		'Valor_Total': float,
@@ -84,14 +85,12 @@ def main():
 	# FATURAMENTO #
 
 	# Gráfico de barras de Faturamento Bruto por mês, ver exemplo do faturamento por dia do dash da Luana
-	tab1, tab2, tab3, tab4, tab5 = st.tabs(["Total de Eventos", "Locação Aroo", "Locação Anexo", "Locação Notiê", "Alimentos e Bebidas"])
+	tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Total de Eventos", "Locação Aroo", "Locação Anexo", "Locação Notiê", "Locação Mirante", "Alimentos e Bebidas"])
 
 	with tab1:
-		# with st.container(border=True):
-		# 	col1, col2, col3 = st.columns([1, 12, 1])
-		# 	with col2:
-		# 		st.markdown("### Faturamento Bruto - Total de Eventos")
-		# 		mes_faturamento = grafico_barras_total_eventos(df_parcelas)
+	
+		st.markdown("### Faturamento Bruto - Vencimento")
+		mes_faturamento = grafico_barras_total_eventos(df_parcelas)
 		
 		st.markdown("### Faturamento Total de Eventos - Competência")
 		mes_faturamento_eventos_competencia = grafico_barras_total_eventos_competencia(df_parcelas_competencia)
@@ -100,6 +99,9 @@ def main():
 		st.markdown("### Faturamento Total de Eventos - Caixa")
 		
 		mes_faturamento_eventos_caixa = grafico_barras_total_eventos_caixa(df_parcelas_caixa)
+
+		st.divider()
+		st.markdown("### ")
 
 	with tab2:
 		st.markdown("### Faturamento - Locação Aroo", help="\\* Por data de vencimento")
@@ -114,6 +116,10 @@ def main():
 		mes_notie = grafico_barras_locacao_notie(df_parcelas, df_eventos)
 
 	with tab5:
+		st.markdown("### Faturamento - Locação Mirante", help="\\* Por data de vencimento")
+		mes_mirante = grafico_barras_locacao_mirante(df_parcelas, df_eventos)
+
+	with tab6:
 		st.markdown("### Faturamento - Alimentos e Bebidas", help="\\* Por data de vencimento")
 		mes_AB = grafico_barras_faturamento_AB(df_parcelas)
 

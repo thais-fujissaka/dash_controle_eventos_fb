@@ -39,7 +39,7 @@ def grafico_barras_repasse_mensal_vencimento(df_parcelas):
         "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
         "legend": {
             "show": True,
-            "data": ["Repasse Bruto Gazit", "Repasse Líquido Gazit"],
+            "data": ["Repasse Bruto", "Repasse Líquido"],
             "top": "top",
             "textStyle": {"color": "#000"}
         },
@@ -50,14 +50,14 @@ def grafico_barras_repasse_mensal_vencimento(df_parcelas):
         "yAxis": [{"type": "value"}],
         "series": [
             {
-                "name": "Repasse Bruto Gazit",
+                "name": "Repasse Bruto",
                 "type": "bar",
                 "barWidth": "35%",
                 "data": dados_brutos_com_labels,
                 "itemStyle": {"color": "#FAC858"}
             },
             {
-                "name": "Repasse Líquido Gazit",
+                "name": "Repasse Líquido",
                 "type": "bar",
                 "barWidth": "35%",
                 "barGap": "5%",
@@ -137,7 +137,7 @@ def grafico_barras_repasse_mensal_recebimento(df_parcelas):
         "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
         "legend": {
             "show": True,
-            "data": ["Repasse Bruto Gazit", "Repasse Líquido Gazit"],
+            "data": ["Repasse Bruto", "Repasse Líquido"],
             "top": "top",
             "textStyle": {"color": "#000"}
         },
@@ -148,14 +148,14 @@ def grafico_barras_repasse_mensal_recebimento(df_parcelas):
         "yAxis": [{"type": "value"}],
         "series": [
             {
-                "name": "Repasse Bruto Gazit",
+                "name": "Repasse Bruto",
                 "type": "bar",
                 "barWidth": "35%",
                 "data": dados_brutos_com_labels,
                 "itemStyle": {"color": "#FAC858"}
             },
             {
-                "name": "Repasse Líquido Gazit",
+                "name": "Repasse Líquido",
                 "type": "bar",
                 "barWidth": "35%",
                 "barGap": "5%",

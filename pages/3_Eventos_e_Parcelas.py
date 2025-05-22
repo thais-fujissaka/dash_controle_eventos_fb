@@ -35,6 +35,7 @@ def main():
 		'Valor_Locacao_Aroo_3': float,
 		'Valor_Locacao_Anexo': float,
 		'Valor_Locacao_Notie': float,
+		'Valor_Locacao_Mirante': float,
 		'Valor_Imposto': float,
 		'Valor_AB': float,
 		'Valor_Total': float,
@@ -96,37 +97,16 @@ def main():
 		df_parcelas = rename_colunas_parcelas(df_parcelas)
 		
 		# Formata valores monetários brasileiro
-		df_eventos = format_columns_brazilian(df_eventos, ['Valor Total', 'Total Gazit', 'Total Locação', 'Valor Locação Aroo 1', 'Valor Locação Aroo 2', 'Valor Locação Aroo 3', 'Valor Locação Anexo', 'Valor Locação Notiê', 'Imposto'])
-		df_parcelas = format_columns_brazilian(df_parcelas, ['Valor Parcela', 'Valor Bruto Repasse Gazit', 'Valor Liquido Repasse Gazit'])
+		df_eventos = format_columns_brazilian(df_eventos, ['Valor Total', 'Total Gazit', 'Total Locação', 'Valor Locação Aroo 1', 'Valor Locação Aroo 2', 'Valor Locação Aroo 3', 'Valor Locação Anexo', 'Valor Locação Notiê', 'Valor Locação Mirante', 'Imposto'])
+		df_parcelas = format_columns_brazilian(df_parcelas, ['Valor Parcela', 'Valor Bruto Repasse Gazit', 'Valor Líquido Repasse Gazit'])
 
 		df_eventos = df_eventos.drop(columns=['Evento'])
 
 		# Eventos
-		st.markdown("## Eventos")
-		st.dataframe(df_eventos, 
-			use_container_width=True,
-			hide_index=True, 
-			column_config={
-				'Evento': st.column_config.Column(
-					width="large"
-				),
-				'Total Gazit': st.column_config.Column(
-					width="medium",
-				)
-			}
-		)
+		dataframe(df_eventos, name='Eventos', key='eventos_e_parcelas_eventos')
 		# Parcelas
-		st.markdown("## Parcelas")
-		st.dataframe(df_parcelas[['ID Parcela', 'ID Evento', 'Nome do Evento', 'Categoria Parcela', 'Data Vencimento', 'Valor Parcela', 'Valor Bruto Repasse Gazit', 'Valor Liquido Repasse Gazit']], 
-			use_container_width=True, 
-			hide_index=True,
-			column_config={
-				'Nome do Evento': st.column_config.Column(
-					width="large"
-				)
-			}
-		)
-		
+		dataframe(df_parcelas[['ID Parcela', 'ID Evento', 'Nome do Evento', 'Categoria Parcela', 'Data Vencimento', 'Valor Parcela', 'Valor Bruto Repasse Gazit', 'Valor Líquido Repasse Gazit']], 
+		name='Parcelas', key='eventos_e_parcelas_parcelas')
 
 	else:
 		st.warning("Por favor, selecione pelo menos um evento.")

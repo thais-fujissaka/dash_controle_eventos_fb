@@ -39,6 +39,7 @@ def main():
 		'Valor_Locacao_Aroo_3': float,
 		'Valor_Locacao_Anexo': float,
 		'Valor_Locacao_Notie': float,
+		'Valor_Locacao_Mirante': float,
 		'Valor_Imposto': float,
 		'Valor_AB': float,
 		'Valor_Total': float,
@@ -90,7 +91,6 @@ def main():
 		mes_vencimento = grafico_barras_repasse_mensal_vencimento(df_parcelas)
 
 		if mes_vencimento != None:
-			st.markdown("#### Parcelas")
 				
 			# Filtra parcelas pelo mês da Data_Vencimento
 			df_parcelas_vencimento = df_filtrar_mes(df_parcelas, 'Data_Vencimento', mes_vencimento)
@@ -99,16 +99,16 @@ def main():
 			df_parcelas_vencimento.drop(columns=['Mes', 'Ano', 'Total_Gazit', 'Valor_Locacao_Total'], inplace=True)
 
 			# Formata datas: datetime[ns] -> str
-			df_parcelas_vencimento = df_formata_datas_sem_horario(df_parcelas_vencimento, ['Data_Vencimento', 'Data_Recebimento'])
+			df_parcelas_vencimento = df_formata_datas_sem_horario(df_parcelas_vencimento, ['Data_Vencimento', 'Data_Recebimento', 'Data_Evento'])
 
 			# Formatacao de colunas
 			df_parcelas_vencimento = rename_colunas_parcelas(df_parcelas_vencimento)
-			df_parcelas_vencimento = format_columns_brazilian(df_parcelas_vencimento, ['Valor Parcela', 'Valor Bruto Repasse Gazit', 'Total Locação', 'Valor Liquido Repasse Gazit'])
+			df_parcelas_vencimento = format_columns_brazilian(df_parcelas_vencimento, ['Valor Parcela', 'Valor Bruto Repasse Gazit', 'Total Locação', 'Valor Líquido Repasse Gazit'])
+			
+			dataframe(df_parcelas_vencimento, name='Parcelas', key='gazit_parcelas_vencimento')
 
-			st.dataframe(df_parcelas_vencimento, use_container_width=True, hide_index=True)
 		
 		else:
-			st.markdown("#### Parcelas")
 			st.markdown("Clique em um mês no gráfico para visualizar parcelas.")
 
 	with tab2:
@@ -117,7 +117,6 @@ def main():
 		mes_recebimento = grafico_barras_repasse_mensal_recebimento(df_parcelas)
 
 		if mes_recebimento != None:
-			st.markdown("#### Parcelas")
 
 			# Filtra parcelas pelo mês da Data_Recebimento
 			df_parcelas_recebimento = df_filtrar_mes(df_parcelas, 'Data_Recebimento', mes_recebimento)
@@ -126,16 +125,15 @@ def main():
 			df_parcelas_recebimento.drop(columns=['Mes', 'Ano', 'Total_Gazit', 'Valor_Locacao_Total'], inplace=True)
 
 			# Formata datas: datetime[ns] -> str
-			df_parcelas_recebimento = df_formata_datas_sem_horario(df_parcelas_recebimento, ['Data_Vencimento', 'Data_Recebimento'])
+			df_parcelas_recebimento = df_formata_datas_sem_horario(df_parcelas_recebimento, ['Data_Vencimento', 'Data_Recebimento', 'Data_Evento'])
 
 			# Formatacao de colunas
 			df_parcelas_recebimento = rename_colunas_parcelas(df_parcelas_recebimento)
-			df_parcelas_recebimento = format_columns_brazilian(df_parcelas_recebimento, ['Valor Parcela', 'Valor Bruto Repasse Gazit', 'Total Locação', 'Valor Liquido Repasse Gazit'])
+			df_parcelas_recebimento = format_columns_brazilian(df_parcelas_recebimento, ['Valor Parcela', 'Valor Bruto Repasse Gazit', 'Total Locação', 'Valor Líquido Repasse Gazit'])
 
-			st.dataframe(df_parcelas_recebimento, use_container_width=True, hide_index=True)
+			dataframe(df_parcelas_recebimento, name='Parcelas', key='gazit_parcelas_recebimento')
 		
 		else:
-			st.markdown("#### Parcelas")
 			st.markdown("Clique em um mês no gráfico para visualizar parcelas.")
 
 if __name__ == '__main__':

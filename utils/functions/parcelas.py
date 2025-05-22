@@ -64,11 +64,12 @@ def rename_colunas_parcelas(df):
 		'Status_Pagamento': 'Status Pagamento',
 		'Data_Recebimento_Parcela': 'Data Recebimento',
 		'Repasse_Gazit_Bruto': 'Valor Bruto Repasse Gazit',
-		'Repasse_Gazit_Liquido': 'Valor Liquido Repasse Gazit',
+		'Repasse_Gazit_Liquido': 'Valor Líquido Repasse Gazit',
 		'Valor_Locacao_Total': 'Total Locação',
 		'Valor_Parcela_Aroos': 'Valor Parcela Aroos',
 		'Valor_Parcela_Anexo': 'Valor Parcela Anexo',
-		'Valor_Parcela_Notie': 'Valor Parcela Notiê'
+		'Valor_Parcela_Notie': 'Valor Parcela Notiê',
+		'Valor_Parcela_Mirante': 'Valor Parcela Mirante'
 	}, inplace=True)
     return df
 
@@ -79,12 +80,9 @@ def calcular_repasses_gazit_parcelas(df_parcelas, df_eventos):
 
 	if not 'Repasse_Gazit_Bruto' in df_parcelas.columns:
 		df_parcelas['Repasse_Gazit_Bruto'] = 0
-	# Zero se a categoria for "A&B"
-	#df_parcelas['Repasse_Gazit_Bruto'] = df_parcelas.apply(lambda x: 0 if x['Categoria_Parcela'] == 'A&B' else None, axis=1)
 
 	if not 'Repasse_Gazit_Liquido' in df_parcelas.columns:
 		df_parcelas['Repasse_Gazit_Liquido'] = 0
-	# df_parcelas['Repasse_Gazit_Liquido'] = df_parcelas.apply(lambda x: 0 if x['Categoria_Parcela'] == 'A&B' else None, axis=1)
 
 	# Calcula Valor Bruto de Repasse para categoria "Locação"
 	for idx, row in df_parcelas.iterrows():
