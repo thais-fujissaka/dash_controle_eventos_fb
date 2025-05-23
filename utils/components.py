@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from utils.functions.date_functions import *
 import io
-from st_aggrid import *
+from st_aggrid import AgGrid
 from utils.functions.general_functions import *
 import streamlit.components.v1 as components
 
