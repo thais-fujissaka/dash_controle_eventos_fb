@@ -88,7 +88,7 @@ def main():
 		df_eventos = df_formata_data_sem_horario(df_eventos, 'Data_Contratacao')
 		df_eventos = df_formata_data_sem_horario(df_eventos, 'Data_Evento')
 		df_parcelas = df_formata_data_sem_horario(df_parcelas, 'Data_Vencimento')
-
+		df_parcelas = df_formata_data_sem_horario(df_parcelas, 'Data_Recebimento')
 		# Calcula o valor de repasse para Gazit das parcelas
 		df_parcelas = calcular_repasses_gazit_parcelas(df_parcelas, df_eventos)
 
