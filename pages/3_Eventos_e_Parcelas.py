@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import datetime
-from workalendar.america import Brazil
 import warnings
 from utils.components import *
 from utils.functions.date_functions import *

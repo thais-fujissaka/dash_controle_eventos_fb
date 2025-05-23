@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from workalendar.america import Brazil
 import openpyxl
 import os
 from utils.queries import *
